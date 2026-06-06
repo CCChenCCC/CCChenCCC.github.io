@@ -29,7 +29,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Subtle paper texture */
         body::before {
             content: '';
             position: fixed;
@@ -39,114 +38,43 @@
             z-index: 0;
         }
 
-        /* Hero Section */
-        .hero {
-            min-height: 92vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 4rem 2rem;
-            position: relative;
-            overflow: hidden;
+        /* ═══════════════════════════════
+           LOADING PROGRESS BAR
+        ═══════════════════════════════ */
+        #progress-bar {
+            position: fixed;
+            top: 0; left: 0;
+            height: 2px;
+            background: linear-gradient(to right, var(--accent), var(--accent-light), var(--accent));
+            width: 0%;
+            z-index: 9999;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 8px rgba(201, 162, 39, 0.5);
         }
 
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(ellipse at 30% 50%, rgba(201, 162, 39, 0.06) 0%, transparent 50%),
-                        radial-gradient(ellipse at 70% 30%, rgba(26, 26, 46, 0.04) 0%, transparent 40%);
-            animation: drift 20s ease-in-out infinite alternate;
-        }
-
-        @keyframes drift {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            100% { transform: translate(-3%, 2%) rotate(1deg); }
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 1;
-        }
-
-        .hero-name {
-            font-family: 'Noto Serif SC', serif;
-            font-size: clamp(3rem, 8vw, 5.5rem);
-            font-weight: 700;
-            letter-spacing: 0.15em;
-            color: var(--ink);
-            margin-bottom: 1rem;
+        /* ═══════════════════════════════
+           CURSOR GLOW
+        ═══════════════════════════════ */
+        #cursor-glow {
+            position: fixed;
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(201, 162, 39, 0.07) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+            transform: translate(-50%, -50%);
+            transition: transform 0.08s ease-out, opacity 0.3s;
             opacity: 0;
-            animation: fadeUp 1s ease forwards 0.3s;
         }
+        body:hover #cursor-glow { opacity: 1; }
 
-        .hero-tagline {
-            font-size: clamp(0.9rem, 2vw, 1.15rem);
-            font-weight: 300;
-            color: var(--muted);
-            letter-spacing: 0.3em;
-            margin-bottom: 2.5rem;
-            opacity: 0;
-            animation: fadeUp 1s ease forwards 0.6s;
-        }
-
-        .hero-divider {
-            width: 60px;
-            height: 1px;
-            background: var(--accent);
-            margin: 0 auto 2.5rem;
-            opacity: 0;
-            animation: fadeUp 1s ease forwards 0.8s;
-        }
-
-        .hero-intro {
-            max-width: 640px;
-            font-size: 1.05rem;
-            color: #555;
-            line-height: 2;
-            opacity: 0;
-            animation: fadeUp 1s ease forwards 1s;
-        }
-
-        .hero-scroll {
-            position: absolute;
-            bottom: 3rem;
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0;
-            animation: fadeUp 1s ease forwards 1.5s;
-        }
-
-        .hero-scroll span {
-            display: block;
-            width: 1px;
-            height: 48px;
-            background: linear-gradient(to bottom, var(--accent), transparent);
-            margin: 0 auto;
-            animation: scrollPulse 2s ease-in-out infinite;
-        }
-
-        @keyframes scrollPulse {
-            0%, 100% { opacity: 0.3; transform: scaleY(0.6); }
-            50% { opacity: 1; transform: scaleY(1); }
-        }
-
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Navigation */
+        /* ═══════════════════════════════
+           NAVIGATION
+        ═══════════════════════════════ */
         .nav {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
+            top: 0; left: 0; right: 0;
             z-index: 100;
             padding: 1.2rem 2.5rem;
             display: flex;
@@ -156,12 +84,10 @@
             background: rgba(250, 249, 246, 0.85);
             border-bottom: 1px solid rgba(232, 228, 222, 0.5);
             transform: translateY(-100%);
-            animation: navSlide 0.6s ease forwards 2s;
+            animation: navSlide 0.6s ease forwards 0.5s;
         }
 
-        @keyframes navSlide {
-            to { transform: translateY(0); }
-        }
+        @keyframes navSlide { to { transform: translateY(0); } }
 
         .nav-logo {
             font-family: 'Noto Serif SC', serif;
@@ -183,11 +109,205 @@
             text-decoration: none;
             letter-spacing: 0.05em;
             transition: color 0.3s;
+            position: relative;
+            padding-bottom: 2px;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 0%; height: 1px;
+            background: var(--accent);
+            transition: width 0.3s ease;
         }
 
         .nav-links a:hover { color: var(--ink); }
+        .nav-links a:hover::after { width: 100%; }
 
-        /* Sections */
+        .nav-links a.active {
+            color: var(--accent);
+        }
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        /* ═══════════════════════════════
+           HERO
+        ═══════════════════════════════ */
+        .hero {
+            min-height: 92vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 4rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg-orbs {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            transition: transform 0.3s ease;
+        }
+
+        .orb-1 {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(201, 162, 39, 0.08) 0%, transparent 70%);
+            top: -10%; left: -10%;
+        }
+
+        .orb-2 {
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(26, 26, 46, 0.05) 0%, transparent 70%);
+            bottom: -5%; right: -5%;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-name {
+            font-family: 'Noto Serif SC', serif;
+            font-size: clamp(3rem, 8vw, 5.5rem);
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            color: var(--ink);
+            margin-bottom: 1rem;
+            opacity: 0;
+            animation: fadeUp 1s ease forwards 0.8s;
+        }
+
+        .hero-tagline {
+            font-size: clamp(0.9rem, 2vw, 1.15rem);
+            font-weight: 300;
+            color: var(--muted);
+            letter-spacing: 0.3em;
+            margin-bottom: 2.5rem;
+            opacity: 0;
+            animation: fadeUp 1s ease forwards 1.1s;
+            min-height: 1.6em;
+        }
+
+        #typewriter-cursor {
+            display: inline-block;
+            width: 1px;
+            height: 1em;
+            background: var(--accent);
+            margin-left: 2px;
+            vertical-align: text-bottom;
+            animation: blink 0.8s step-end infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .hero-divider {
+            width: 60px;
+            height: 1px;
+            background: var(--accent);
+            margin: 0 auto 2.5rem;
+            opacity: 0;
+            animation: fadeUp 1s ease forwards 1.4s;
+        }
+
+        .hero-intro {
+            max-width: 640px;
+            font-size: 1.05rem;
+            color: #555;
+            line-height: 2;
+            opacity: 0;
+            animation: fadeUp 1s ease forwards 1.7s;
+        }
+
+        .hero-scroll {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            animation: fadeUp 1s ease forwards 2.2s;
+        }
+
+        .hero-scroll span {
+            display: block;
+            width: 1px;
+            height: 48px;
+            background: linear-gradient(to bottom, var(--accent), transparent);
+            margin: 0 auto;
+            animation: scrollPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes scrollPulse {
+            0%, 100% { opacity: 0.3; transform: scaleY(0.6); }
+            50% { opacity: 1; transform: scaleY(1); }
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ═══════════════════════════════
+           STATS
+        ═══════════════════════════════ */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 2rem;
+            padding: 4rem 2rem;
+            max-width: 960px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 2rem 1rem;
+            background: var(--card-bg);
+            border-radius: 2px;
+            border: 1px solid var(--border);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: default;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.06);
+        }
+
+        .stat-number {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--ink);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--muted);
+            letter-spacing: 0.1em;
+        }
+
+        /* ═══════════════════════════════
+           SECTIONS
+        ═══════════════════════════════ */
         .section {
             padding: 6rem 2rem;
             max-width: 960px;
@@ -203,6 +323,9 @@
             color: var(--accent);
             text-transform: uppercase;
             margin-bottom: 0.8rem;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.6s ease;
         }
 
         .section-title {
@@ -212,6 +335,15 @@
             color: var(--ink);
             margin-bottom: 3rem;
             line-height: 1.4;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.6s ease 0.1s;
+        }
+
+        .section-label.reveal,
+        .section-title.reveal {
+            opacity: 1;
+            transform: translateX(0);
         }
 
         /* Timeline */
@@ -223,9 +355,7 @@
         .timeline::before {
             content: '';
             position: absolute;
-            left: 0;
-            top: 0.5rem;
-            bottom: 0;
+            left: 0; top: 0.5rem; bottom: 0;
             width: 1px;
             background: var(--border);
         }
@@ -235,7 +365,7 @@
             margin-bottom: 3.5rem;
             opacity: 0;
             transform: translateY(30px);
-            transition: all 0.8s ease;
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         .timeline-item.visible {
@@ -248,16 +378,16 @@
             position: absolute;
             left: -2.5rem;
             top: 0.6rem;
-            width: 9px;
-            height: 9px;
+            width: 9px; height: 9px;
             border-radius: 50%;
             background: var(--surface);
             border: 2px solid var(--accent);
-            transition: background 0.3s;
+            transition: background 0.3s, transform 0.3s;
         }
 
         .timeline-item:hover::before {
             background: var(--accent);
+            transform: scale(1.4);
         }
 
         .timeline-period {
@@ -301,47 +431,6 @@
             font-weight: bold;
         }
 
-        /* Stats Row */
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 2rem;
-            padding: 4rem 2rem;
-            max-width: 960px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
-        }
-
-        .stat-card {
-            text-align: center;
-            padding: 2rem 1rem;
-            background: var(--card-bg);
-            border-radius: 2px;
-            border: 1px solid var(--border);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.04);
-        }
-
-        .stat-number {
-            font-family: 'Noto Serif SC', serif;
-            font-size: 2.8rem;
-            font-weight: 700;
-            color: var(--ink);
-            line-height: 1;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            font-size: 0.85rem;
-            color: var(--muted);
-            letter-spacing: 0.1em;
-        }
-
         /* Education */
         .edu-grid {
             display: grid;
@@ -354,6 +443,14 @@
             background: var(--card-bg);
             border: 1px solid var(--border);
             border-radius: 2px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .edu-item.reveal {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .edu-degree {
@@ -369,10 +466,7 @@
             margin-bottom: 0.3rem;
         }
 
-        .edu-time {
-            font-size: 0.85rem;
-            color: var(--muted);
-        }
+        .edu-time { font-size: 0.85rem; color: var(--muted); }
 
         /* Awards */
         .award-list {
@@ -386,9 +480,15 @@
             display: flex;
             justify-content: space-between;
             align-items: baseline;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.5s ease;
         }
 
-        .award-list li:last-child { border-bottom: none; }
+        .award-list li.reveal {
+            opacity: 1;
+            transform: translateX(0);
+        }
 
         .award-year {
             font-size: 0.8rem;
@@ -397,7 +497,7 @@
             margin-left: 1rem;
         }
 
-        /* Contact / Footer */
+        /* Footer */
         .footer {
             padding: 4rem 2rem;
             text-align: center;
@@ -427,8 +527,7 @@
         .contact-link:hover { color: var(--ink); }
 
         .contact-link svg {
-            width: 18px;
-            height: 18px;
+            width: 18px; height: 18px;
             stroke: currentColor;
             fill: none;
             stroke-width: 1.5;
@@ -456,22 +555,34 @@
 </head>
 <body>
 
+    <!-- Loading progress bar -->
+    <div id="progress-bar"></div>
+
+    <!-- Cursor glow effect -->
+    <div id="cursor-glow"></div>
+
     <!-- Navigation -->
     <nav class="nav">
         <a href="#" class="nav-logo">陈庆晨</a>
         <ul class="nav-links">
-            <li><a href="#experience">经历</a></li>
-            <li><a href="#education">教育</a></li>
-            <li><a href="#awards">荣誉</a></li>
-            <li><a href="#contact">联系</a></li>
+            <li><a href="#experience" data-section="experience">经历</a></li>
+            <li><a href="#education" data-section="education">教育</a></li>
+            <li><a href="#awards" data-section="awards">荣誉</a></li>
+            <li><a href="#contact" data-section="contact">联系</a></li>
         </ul>
     </nav>
 
     <!-- Hero -->
-    <section class="hero">
+    <section class="hero" id="hero">
+        <div class="hero-bg-orbs">
+            <div class="orb orb-1" id="orb1"></div>
+            <div class="orb orb-2" id="orb2"></div>
+        </div>
         <div class="hero-content">
             <h1 class="hero-name">陈庆晨</h1>
-            <p class="hero-tagline">产学研合作 · 人才培养 · AI生态</p>
+            <p class="hero-tagline">
+                <span id="typewriter-text"></span><span id="typewriter-cursor"></span>
+            </p>
             <div class="hero-divider"></div>
             <p class="hero-intro">
                 北航电子信息工程本硕，八年头部AI企业高校合作经验。<br>
@@ -485,19 +596,19 @@
     <!-- Stats -->
     <div class="stats">
         <div class="stat-card">
-            <div class="stat-number">8+</div>
+            <div class="stat-number" data-target="8" data-suffix="+" data-label="年产学研经验">0</div>
             <div class="stat-label">年产学研经验</div>
         </div>
         <div class="stat-card">
-            <div class="stat-number">250+</div>
+            <div class="stat-number" data-target="250" data-suffix="+" data-label="资助学生">0</div>
             <div class="stat-label">资助学生</div>
         </div>
         <div class="stat-card">
-            <div class="stat-number">10</div>
+            <div class="stat-number" data-target="10" data-suffix="" data-label="届奖学金运营">0</div>
             <div class="stat-label">届奖学金运营</div>
         </div>
         <div class="stat-card">
-            <div class="stat-number">50+</div>
+            <div class="stat-number" data-target="50" data-suffix="+" data-label="合作实验室">0</div>
             <div class="stat-label">合作实验室</div>
         </div>
     </div>
@@ -507,7 +618,6 @@
         <div class="section-label">EXPERIENCE</div>
         <h2 class="section-title">工作经历</h2>
         <div class="timeline">
-
             <div class="timeline-item">
                 <div class="timeline-period">2018.01 — 至今</div>
                 <div class="timeline-role">高校合作经理</div>
@@ -523,7 +633,6 @@
                     </ul>
                 </div>
             </div>
-
             <div class="timeline-item">
                 <div class="timeline-period">2013.09 — 2015.09</div>
                 <div class="timeline-role">沙河校区团工委 2+2辅导员</div>
@@ -537,7 +646,6 @@
                     </ul>
                 </div>
             </div>
-
         </div>
     </section>
 
@@ -589,17 +697,174 @@
         <p class="footer-copy">&copy; 2026 陈庆晨 · 北京</p>
     </footer>
 
-    <!-- Scroll Animation -->
+    <!-- ═══════════════════════════════
+         JAVASCRIPT — All Effects
+    ═══════════════════════════════ -->
     <script>
-        const observer = new IntersectionObserver((entries) => {
+    (function() {
+        'use strict';
+
+        // ── 1. Page Loading Progress ──────────────────────────────
+        const progressBar = document.getElementById('progress-bar');
+        let loadProgress = 0;
+        const loadInterval = setInterval(() => {
+            loadProgress = Math.min(loadProgress + Math.random() * 15, 90);
+            progressBar.style.width = loadProgress + '%';
+        }, 80);
+
+        window.addEventListener('load', () => {
+            clearInterval(loadInterval);
+            progressBar.style.width = '100%';
+            setTimeout(() => { progressBar.style.opacity = '0'; }, 600);
+        });
+
+        // ── 2. Cursor Glow ────────────────────────────────────────
+        const glow = document.getElementById('cursor-glow');
+        let glowX = 0, glowY = 0, curX = 0, curY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            curX = e.clientX;
+            curY = e.clientY;
+        });
+
+        (function moveGlow() {
+            glowX += (curX - glowX) * 0.12;
+            glowY += (curY - glowY) * 0.12;
+            glow.style.left = glowX + 'px';
+            glow.style.top  = glowY + 'px';
+            requestAnimationFrame(moveGlow);
+        })();
+
+        // ── 3. Typewriter Effect ──────────────────────────────────
+        const phrases = [
+            '产学研合作 · 人才培养 · AI生态',
+            'University-Industry Collaboration · Talent Development · AI Ecosystem'
+        ];
+        let phraseIndex = 0;
+        let charIndex = 0;
+        let deleting = false;
+        const tw = document.getElementById('typewriter-text');
+        const cursor = document.getElementById('typewriter-cursor');
+
+        // Start typewriter after hero animation
+        setTimeout(() => {
+            tw.parentElement.style.opacity = '1'; // show tagline
+            tickTypewriter();
+        }, 1800);
+
+        function tickTypewriter() {
+            const current = phrases[phraseIndex];
+            if (!deleting) {
+                tw.textContent = current.substring(0, charIndex++);
+                if (charIndex > current.length) {
+                    deleting = true;
+                    setTimeout(tickTypewriter, 2200);
+                    return;
+                }
+            } else {
+                tw.textContent = current.substring(0, charIndex--);
+                if (charIndex < 0) {
+                    deleting = false;
+                    phraseIndex = (phraseIndex + 1) % phrases.length;
+                    setTimeout(tickTypewriter, 400);
+                    return;
+                }
+            }
+            setTimeout(tickTypewriter, deleting ? 40 : 70);
+        }
+
+        // ── 4. Count-Up Animation ────────────────────────────────
+        const countObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
+                    const el = entry.target;
+                    const target = parseInt(el.dataset.target);
+                    const suffix = el.dataset.suffix || '';
+                    const duration = 1800;
+                    const start = performance.now();
+
+                    function update(now) {
+                        const elapsed = now - start;
+                        const progress = Math.min(elapsed / duration, 1);
+                        // Ease out cubic
+                        const eased = 1 - Math.pow(1 - progress, 3);
+                        el.textContent = Math.round(eased * target) + suffix;
+                        if (progress < 1) requestAnimationFrame(update);
+                    }
+                    requestAnimationFrame(update);
+                    countObserver.unobserve(el);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.stat-number[data-target]').forEach(el => {
+            countObserver.observe(el);
+        });
+
+        // ── 5. Scroll Reveal (Intersection Observer) ──────────────
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('reveal');
+                    revealObserver.unobserve(entry.target);
                 }
             });
         }, { threshold: 0.15 });
 
-        document.querySelectorAll('.timeline-item').forEach(el => observer.observe(el));
+        document.querySelectorAll('.section-label, .section-title, .edu-item, .award-list li').forEach(el => {
+            revealObserver.observe(el);
+        });
+
+        // Timeline items
+        const timelineObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    timelineObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.timeline-item').forEach(el => timelineObserver.observe(el));
+
+        // ── 6. Active Nav Highlight ───────────────────────────────
+        const navLinks = document.querySelectorAll('.nav-links a[data-section]');
+        const sections = Array.from(navLinks).map(a => document.getElementById(a.dataset.section));
+
+        const navObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    navLinks.forEach(a => {
+                        a.classList.toggle('active', a.dataset.section === id);
+                    });
+                }
+            });
+        }, { rootMargin: '-40% 0px -50% 0px' });
+
+        sections.forEach(s => { if (s) navObserver.observe(s); });
+
+        // ── 7. Hero Mouse Parallax ────────────────────────────────
+        const orb1 = document.getElementById('orb1');
+        const orb2 = document.getElementById('orb2');
+
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth  - 0.5) * 2;
+            const y = (e.clientY / window.innerHeight - 0.5) * 2;
+            if (orb1) orb1.style.transform = `translate(${x * 20}px, ${y * 15}px)`;
+            if (orb2) orb2.style.transform = `translate(${-x * 15}px, ${-y * 20}px)`;
+        });
+
+        // ── 8. Smooth scroll for nav links ────────────────────────
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.getElementById(link.dataset.section);
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+    })();
     </script>
 </body>
 </html>
