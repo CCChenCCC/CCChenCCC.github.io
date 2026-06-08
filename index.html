@@ -592,19 +592,19 @@
     <!-- Stats -->
     <div class="stats">
         <div class="stat-card">
-            <div class="stat-number" data-target="8">0<span class="stat-unit"> 年</span></div>
+            <div class="stat-number" data-target="8"><span class="stat-value">0</span><span class="stat-unit"> 年</span></div>
             <div class="stat-label">AI领域校企合作经验</div>
         </div>
         <div class="stat-card">
-            <div class="stat-number" data-target="250">0<span class="stat-unit"> 名</span></div>
+            <div class="stat-number" data-target="250"><span class="stat-value">0</span><span class="stat-unit"> 名</span></div>
             <div class="stat-label">顶尖学生资源</div>
         </div>
         <div class="stat-card">
-            <div class="stat-number" data-target="10">0<span class="stat-unit"> 届</span></div>
+            <div class="stat-number" data-target="10"><span class="stat-value">0</span><span class="stat-unit"> 届</span></div>
             <div class="stat-label">商汤奖学金运营</div>
         </div>
         <div class="stat-card">
-            <div class="stat-number" data-target="50">0<span class="stat-unit"> 项</span></div>
+            <div class="stat-number" data-target="50"><span class="stat-value">0</span><span class="stat-unit"> 项</span></div>
             <div class="stat-label">校企合作课题落地经验</div>
         </div>
     </div>
@@ -775,16 +775,16 @@
                 if (entry.isIntersecting) {
                     const el = entry.target;
                     const target = parseInt(el.dataset.target);
-                    const suffix = el.dataset.suffix || '';
                     const duration = 1800;
                     const start = performance.now();
+                    const valueEl = el.querySelector('.stat-value');
 
                     function update(now) {
                         const elapsed = now - start;
                         const progress = Math.min(elapsed / duration, 1);
                         // Ease out cubic
                         const eased = 1 - Math.pow(1 - progress, 3);
-                        el.textContent = Math.round(eased * target) + suffix;
+                        valueEl.textContent = Math.round(eased * target);
                         if (progress < 1) requestAnimationFrame(update);
                     }
                     requestAnimationFrame(update);
