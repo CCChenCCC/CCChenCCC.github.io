@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>摄影作品 · 相册 | 陈庆晨</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+        :root {
+            --ink: #1a1a2e;
+            --accent: #c9a227;
+            --accent-light: #e8d48b;
+            --surface: #faf9f6;
+            --muted: #8a8a8a;
+            --border: #e8e4de;
+            --card-bg: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: var(--surface);
+            color: var(--ink);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            padding: 1.2rem 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(12px);
+            background: rgba(250, 249, 246, 0.88);
+            border-bottom: 1px solid rgba(232, 228, 222, 0.5);
+        }
+
+        .nav-logo {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--ink);
+            text-decoration: none;
+        }
+
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+
+        .nav-links a {
+            font-size: 0.85rem;
+            color: var(--muted);
+            text-decoration: none;
+            letter-spacing: 0.05em;
+            transition: color 0.3s;
+            position: relative;
+            padding-bottom: 2px;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 0%; height: 1px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover { color: var(--ink); }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-links a.active { color: var(--accent); }
+        .nav-links a.active::after { width: 100%; }
+
+        /* Page Header */
+        .page-header {
+            padding: 10rem 2rem 3rem;
+            text-align: center;
+        }
+
+        .page-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: var(--ink);
+            margin-bottom: 1rem;
+        }
+
+        .page-divider {
+            width: 40px;
+            height: 1px;
+            background: var(--accent);
+            margin: 1.5rem auto 0;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            margin: 2rem auto 0;
+            border-bottom: 1px solid var(--border);
+            max-width: 600px;
+        }
+
+        .tab-btn {
+            padding: 0.8rem 2rem;
+            border: none;
+            background: none;
+            font-family: 'Noto Sans SC', sans-serif;
+            font-size: 0.85rem;
+            color: var(--muted);
+            cursor: pointer;
+            letter-spacing: 0.08em;
+            position: relative;
+            transition: color 0.3s;
+        }
+
+        .tab-btn::after {
+            content: '';
+            position: absolute;
+            bottom: -1px; left: 0;
+            width: 100%; height: 1px;
+            background: var(--accent);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .tab-btn:hover { color: var(--ink); }
+        .tab-btn.active { color: var(--ink); font-weight: 500; }
+        .tab-btn.active::after { transform: scaleX(1); }
+
+        /* Album panels */
+        .album-panel {
+            display: none;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .album-panel.active { display: block; }
+
+        .album-desc {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-bottom: 2.5rem;
+            letter-spacing: 0.05em;
+        }
+
+        /* Grid inside album */
+        .album-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.2rem;
+        }
+
+        .album-photo {
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+            background: var(--border);
+        }
+
+        .album-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .album-photo:hover img {
+            transform: scale(1.06);
+        }
+
+        .album-photo .overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(transparent 60%, rgba(0,0,0,0.4));
+            opacity: 0;
+            transition: opacity 0.4s;
+            display: flex;
+            align-items: flex-end;
+            padding: 1rem;
+            color: #fff;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+        }
+
+        .album-photo:hover .overlay { opacity: 1; }
+
+        /* Lightbox (reuse same style) */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: rgba(0,0,0,0.92);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        .lightbox.active { opacity: 1; pointer-events: all; }
+
+        .lightbox img {
+            max-width: 90vw;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 2px;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 2rem; right: 2rem;
+            width: 48px; height: 48px;
+            border: none;
+            background: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .lightbox-close:hover { transform: rotate(90deg); }
+
+        /* Footer */
+        .footer {
+            padding: 4rem 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            margin-top: 4rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--muted);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover { color: var(--ink); }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .album-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 600px) {
+            .album-grid { grid-template-columns: 1fr; gap: 1rem; }
+            .nav { padding: 1rem 1.5rem; }
+            .tabs { overflow-x: auto; }
+            .tab-btn { padding: 0.8rem 1.2rem; font-size: 0.8rem; }
+        }
+
+        /* Reveal */
+        .album-photo {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .album-photo.visible { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+
+    <!-- Nav -->
+    <nav class="nav">
+        <a href="index.html" class="nav-logo">陈庆晨</a>
+        <ul class="nav-links">
+            <li><a href="index.html">主页</a></li>
+            <li><a href="photos-album.html" class="active">摄影</a></li>
+            <li><a href="index.html#contact">联系</a></li>
+        </ul>
+    </nav>
+
+    <!-- Header -->
+    <div class="page-header">
+        <h1 class="page-title">摄影作品</h1>
+        <div class="page-divider"></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('travel')">旅行</button>
+        <button class="tab-btn" onclick="switchTab('street')">街拍</button>
+        <button class="tab-btn" onclick="switchTab('still')">静物</button>
+    </div>
+
+    <!-- Album: 旅行 -->
+    <div class="album-panel active" id="panel-travel">
+        <p class="album-desc">在路上，看见世界的一角</p>
+        <div class="album-grid" id="grid-travel">
+            <div class="album-photo" onclick="openLightbox(this)">
+                <img src="https://picsum.photos/seed/t1/800/800" alt="" loading="lazy">
+                <div class="overlay">京都 · 2024</div>
+            </div>
+            <div class="album-photo" onclick="openLightbox(this)">
+                <img src="https://picsum.photos/seed/t2/800/800" alt="" loading="lazy">
+                <div class="overlay">大理 · 2023</div>
+            </div>
+            <div class="album-photo" onclick="openLightbox(this)">
+                <img src="https://picsum.photos/seed/t3/800/800" alt="" loading="lazy">
+                <div class="overlay">上海 · 2024</div>
+            </div>
+            <div class="album-photo" onclick="openLightbox(this)">
+                <img src="https://picsum.photos/seed/t4/800/800" alt="" loading="lazy">
+                <div class="overlay">杭州 · 2023</div>
+            </div>
+            <div class="album-photo" onclick="openLightbox(this)">
+                <img src="https://picsum.photos/seed/t5/800/800" alt="" loading="lazy">
+                <div class="overlay">成都 · 2024</div>
+            </div>
+            <div class="album-photo" onclick="openLightbox(this)">
+                <img src="https://picsum.photos/seed/t6/800/800" alt="" loading="lazy">
+                <div class="overlay">厦门 · 2024</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Album: 街拍 -->
+    <div class="album-panel" id="panel-street">
+        <p class="album-desc">城市的呼吸，在镜头里慢下来</p>
+        <div class="album-grid" id="grid-street">
+            <div class="album-photo" onclick="openLightbox(this)">
+                <img src="https://picsum.photos/seed/s1/800/800" alt="" loading="lazy">
+                <div class="overlay">路口 · 2024</div>
+            </div>
+            <div class="album-photo" onclick="openLightbox(this)">
+                <img src="https://picsum.photos/seed/s2/800/800" alt="" loading="lazy">
+                <div class="overlay">书店 · 2023</div>
+            </div>
+            <div class="album-photo" onclick="openLightbox(this)">
+                <img src="https://picsum.photos/seed/s3/800/800" alt="" loading="lazy">
+                <div class="overlay">雨天 · 2024</div>
+            </div>
+            <div class="album-photo" onclick="openLightbox(this)">
+                <img src="https://picsum.photos/seed/s4/800/800" alt="" loading="lazy">
+                <div class="overlay">夜市 · 2024</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Album: 静物 -->
+    <div class="album-panel" id="panel-still">
+        <p class="album-desc">微距之下，看见日常的纹理</p>
+        <div class="album-grid" id="grid-still">
+            <div class="album-photo" onclick="openLightbox(this)">
+                <img src="https://picsum.photos/seed/n1/800/800" alt="" loading="lazy">
+                <div class="overlay">窗台 · 2024</div>
+            </div>
+            <div class="album-photo" onclick="openLightbox(this)">
+                <img src="https://picsum.photos/seed/n2/800/800" alt="" loading="lazy">
+                <div class="overlay">茶杯 · 2023</div>
+            </div>
+            <div class="album-photo" onclick="openLightbox(this)">
+                <img src="https://picsum.photos/seed/n3/800/800" alt="" loading="lazy">
+                <div class="overlay">书桌 · 2024</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+        <button class="lightbox-close" onclick="closeLightbox(event)">&times;</button>
+        <img id="lightbox-img" src="" alt="">
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <a href="index.html" class="back-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            返回主页
+        </a>
+    </div>
+
+    <script>
+        function switchTab(name) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.textContent.includes(name === 'travel' ? '旅行' : name === 'street' ? '街拍' : '静物')));
+            document.querySelectorAll('.album-panel').forEach(p => p.classList.remove('active'));
+            document.getElementById('panel-' + name).classList.add('active');
+            // Re-trigger reveal
+            observePanel(name);
+        }
+
+        function openLightbox(el) {
+            const img = el.querySelector('img');
+            document.getElementById('lightbox-img').src = img.src;
+            document.getElementById('lightbox').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(e) {
+            if (e.target === e.currentTarget || e.target.classList.contains('lightbox-close')) {
+                document.getElementById('lightbox').classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeLightbox({target: document.getElementById('lightbox')});
+        });
+
+        // Reveal on scroll
+        function observePanel(panelId) {
+            const panel = document.getElementById('panel-' + panelId);
+            if (!panel) return;
+            const photos = panel.querySelectorAll('.album-photo');
+            const obs = new IntersectionObserver((entries) => {
+                entries.forEach((entry, i) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+                        obs.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            photos.forEach(p => obs.observe(p));
+        }
+
+        // Init first panel
+        observePanel('travel');
+    </script>
+</body>
+</html>

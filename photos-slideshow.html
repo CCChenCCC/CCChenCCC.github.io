@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>摄影作品 · 沉浸式 | 陈庆晨</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+        :root {
+            --ink: #1a1a2e;
+            --accent: #c9a227;
+            --surface: #0a0a0a;
+            --muted: #999;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: var(--surface);
+            color: #fff;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Top Nav */
+        .top-nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 200;
+            padding: 1.2rem 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
+            pointer-events: none;
+        }
+
+        .top-nav * { pointer-events: auto; }
+
+        .nav-logo {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            text-decoration: none;
+            letter-spacing: 0.1em;
+        }
+
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+
+        .nav-links a {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            letter-spacing: 0.05em;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover { color: #fff; }
+        .nav-links a.active { color: var(--accent); }
+
+        /* Slideshow */
+        .slideshow {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide.active { opacity: 1; z-index: 1; }
+        .slide.prev { opacity: 0; z-index: 0; }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Caption overlay */
+        .slide-caption {
+            position: absolute;
+            bottom: 4rem;
+            left: 3rem;
+            z-index: 10;
+        }
+
+        .slide-caption h2 {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+        }
+
+        .slide-caption p {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.7);
+            letter-spacing: 0.1em;
+        }
+
+        /* Navigation arrows */
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            width: 56px; height: 56px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(8px);
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-arrow:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.6);
+        }
+
+        .nav-arrow.left { left: 2rem; }
+        .nav-arrow.right { right: 2rem; }
+
+        /* Dots indicator */
+        .dots {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.4);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .dot.active {
+            background: var(--accent);
+            transform: scale(1.4);
+        }
+
+        /* Slide counter */
+        .slide-counter {
+            position: absolute;
+            top: 2rem;
+            right: 3rem;
+            z-index: 100;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.6);
+            letter-spacing: 0.1em;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .slide-counter .current {
+            font-size: 1.8rem;
+            font-weight: 300;
+            color: #fff;
+        }
+
+        /* Keyboard hint */
+        .keyboard-hint {
+            position: absolute;
+            bottom: 2rem;
+            right: 3rem;
+            z-index: 100;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.3);
+            letter-spacing: 0.05em;
+        }
+
+        /* Transition: slide left/right */
+        .slide-enter-left { animation: slideInLeft 0.6s ease forwards; }
+        .slide-enter-right { animation: slideInRight 0.6s ease forwards; }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-60px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(60px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .top-nav { padding: 1rem 1.5rem; }
+            .nav-links { gap: 1rem; }
+            .slide-caption { bottom: 3rem; left: 2rem; }
+            .slide-caption h2 { font-size: 1.4rem; }
+            .nav-arrow { width: 44px; height: 44px; }
+            .nav-arrow.left { left: 1rem; }
+            .nav-arrow.right { right: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Nav -->
+    <nav class="top-nav">
+        <a href="index.html" class="nav-logo">陈庆晨</a>
+        <ul class="nav-links">
+            <li><a href="index.html">主页</a></li>
+            <li><a href="photos-slideshow.html" class="active">摄影</a></li>
+            <li><a href="index.html#contact">联系</a></li>
+        </ul>
+    </nav>
+
+    <!-- Slideshow -->
+    <div class="slideshow" id="slideshow">
+
+        <div class="slide active" data-caption-title="黄昏" data-caption-desc="DUSK · 2024">
+            <img src="https://picsum.photos/1920/1080?random=10" alt="黄昏" loading="eager">
+        </div>
+
+        <div class="slide" data-caption-title="街角" data-caption-desc="STREET CORNER · 2024">
+            <img src="https://picsum.photos/1920/1080?random=11" alt="街角" loading="lazy">
+        </div>
+
+        <div class="slide" data-caption-title="光影" data-caption-desc="LIGHT & SHADOW · 2023">
+            <img src="https://picsum.photos/1920/1080?random=12" alt="光影" loading="lazy">
+        </div>
+
+        <div class="slide" data-caption-title="清晨" data-caption-desc="MORNING · 2024">
+            <img src="https://picsum.photos/1920/1080?random=13" alt="清晨" loading="lazy">
+        </div>
+
+        <div class="slide" data-caption-title="归途" data-caption-desc="THE WAY HOME · 2023">
+            <img src="https://picsum.photos/1920/1080?random=14" alt="归途" loading="lazy">
+        </div>
+
+        <div class="slide" data-caption-title="雨后" data-caption-desc="AFTER RAIN · 2024">
+            <img src="https://picsum.photos/1920/1080?random=15" alt="雨后" loading="lazy">
+        </div>
+
+        <!-- Nav arrows -->
+        <button class="nav-arrow left" onclick="prevSlide()">‹</button>
+        <button class="nav-arrow right" onclick="nextSlide()">›</button>
+
+        <!-- Caption -->
+        <div class="slide-caption" id="slide-caption">
+            <h2 id="caption-title">黄昏</h2>
+            <p id="caption-desc">DUSK · 2024</p>
+        </div>
+
+        <!-- Counter -->
+        <div class="slide-counter">
+            <span class="current" id="counter-current">01</span>
+            <span> / </span>
+            <span id="counter-total">06</span>
+        </div>
+
+        <!-- Dots -->
+        <div class="dots" id="dots"></div>
+
+        <!-- Keyboard hint -->
+        <div class="keyboard-hint">← → 键切换 · ESC 退出</div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const total = slides.length;
+        let current = 0;
+        let isTransitioning = false;
+
+        // Init dots
+        const dotsContainer = document.getElementById('dots');
+        slides.forEach((_, i) => {
+            const dot = document.createElement('div');
+            dot.className = 'dot' + (i === 0 ? ' active' : '');
+            dot.onclick = () => goToSlide(i);
+            dotsContainer.appendChild(dot);
+        });
+
+        document.getElementById('counter-total').textContent = String(total).padStart(2, '0');
+
+        function updateCaption() {
+            const slide = slides[current];
+            document.getElementById('caption-title').textContent = slide.dataset.captionTitle;
+            document.getElementById('caption-desc').textContent = slide.dataset.captionDesc;
+            document.getElementById('counter-current').textContent = String(current + 1).padStart(2, '0');
+
+            document.querySelectorAll('.dot').forEach((d, i) => {
+                d.classList.toggle('active', i === current);
+            });
+        }
+
+        function goToSlide(n) {
+            if (isTransitioning) return;
+            isTransitioning = true;
+
+            slides[current].classList.remove('active');
+            slides[current].classList.add('prev');
+
+            current = (n + total) % total;
+
+            slides[current].classList.remove('prev');
+            slides[current].classList.add('active');
+
+            updateCaption();
+
+            setTimeout(() => { isTransitioning = false; }, 500);
+        }
+
+        function nextSlide() { goToSlide(current + 1); }
+        function prevSlide() { goToSlide(current - 1); }
+
+        // Keyboard
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        // Touch swipe
+        let touchStartX = 0;
+        document.getElementById('slideshow').addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+        document.getElementById('slideshow').addEventListener('touchend', (e) => {
+            const diff = e.changedTouches[0].screenX - touchStartX;
+            if (Math.abs(diff) > 50) {
+                diff > 0 ? prevSlide() : nextSlide();
+            }
+        });
+
+        // Auto-play (optional, pause on hover)
+        let autoplay = setInterval(nextSlide, 5000);
+        document.getElementById('slideshow').addEventListener('mouseenter', () => clearInterval(autoplay));
+        document.getElementById('slideshow').addEventListener('mouseleave', () => {
+            autoplay = setInterval(nextSlide, 5000);
+        });
+    </script>
+</body>
+</html>
