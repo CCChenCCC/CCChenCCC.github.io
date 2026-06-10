@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>摄影作品 · 相册 | 陈庆晨</title>
+    <title>Photography Album | Chen Qingchen</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
 
@@ -108,7 +108,7 @@
         }
 
         .tab-btn {
-            padding: 0.8rem 2rem;
+            padding: 0.8rem 2.5rem;
             border: none;
             background: none;
             font-family: 'Noto Sans SC', sans-serif;
@@ -152,15 +152,14 @@
             letter-spacing: 0.05em;
         }
 
-        /* Grid inside album */
+        /* Grid inside album - preserve aspect ratio, no crop */
         .album-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 1.2rem;
         }
 
         .album-photo {
-            aspect-ratio: 1 / 1;
             overflow: hidden;
             border-radius: 2px;
             cursor: pointer;
@@ -170,13 +169,13 @@
 
         .album-photo img {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
+            height: auto;
+            display: block;
             transition: transform 0.6s ease;
         }
 
         .album-photo:hover img {
-            transform: scale(1.06);
+            transform: scale(1.03);
         }
 
         .album-photo .overlay {
@@ -195,7 +194,7 @@
 
         .album-photo:hover .overlay { opacity: 1; }
 
-        /* Lightbox (reuse same style) */
+        /* Lightbox */
         .lightbox {
             position: fixed;
             inset: 0;
@@ -261,10 +260,10 @@
             .album-grid { grid-template-columns: 1fr; gap: 1rem; }
             .nav { padding: 1rem 1.5rem; }
             .tabs { overflow-x: auto; }
-            .tab-btn { padding: 0.8rem 1.2rem; font-size: 0.8rem; }
+            .tab-btn { padding: 0.8rem 1.5rem; font-size: 0.8rem; }
         }
 
-        /* Reveal */
+        /* Reveal animation */
         .album-photo {
             opacity: 0;
             transform: translateY(20px);
@@ -278,96 +277,75 @@
 
     <!-- Nav -->
     <nav class="nav">
-        <a href="index.html" class="nav-logo">陈庆晨</a>
+        <a href="index.html" class="nav-logo">Chen Qingchen</a>
         <ul class="nav-links">
-            <li><a href="index.html">主页</a></li>
-            <li><a href="photos-album.html" class="active">摄影</a></li>
-            <li><a href="index.html#contact">联系</a></li>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="photos-album.html" class="active">Photos</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
         </ul>
     </nav>
 
     <!-- Header -->
     <div class="page-header">
-        <h1 class="page-title">摄影作品</h1>
+        <h1 class="page-title">Photography</h1>
         <div class="page-divider"></div>
     </div>
 
     <!-- Tabs -->
     <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('travel')">旅行</button>
-        <button class="tab-btn" onclick="switchTab('street')">街拍</button>
-        <button class="tab-btn" onclick="switchTab('still')">静物</button>
+        <button class="tab-btn active" onclick="switchTab('world')">World</button>
+        <button class="tab-btn" onclick="switchTab('life')">Life</button>
+        <button class="tab-btn" onclick="switchTab('bw')">B&W</button>
     </div>
 
-    <!-- Album: 旅行 -->
-    <div class="album-panel active" id="panel-travel">
-        <p class="album-desc">在路上，看见世界的一角</p>
-        <div class="album-grid" id="grid-travel">
+    <!-- Album: World -->
+    <div class="album-panel active" id="panel-world">
+        <p class="album-desc">Corners of the world through my lens</p>
+        <div class="album-grid" id="grid-world">
             <div class="album-photo" onclick="openLightbox(this)">
-                <img src="https://picsum.photos/seed/t1/800/800" alt="" loading="lazy">
-                <div class="overlay">京都 · 2024</div>
+                <img src="photos/world-01.jpg" alt="Bird Silhouette at Sunset" loading="lazy">
+                <div class="overlay">Bird Silhouette at Sunset · Sunset Glow</div>
             </div>
+
             <div class="album-photo" onclick="openLightbox(this)">
-                <img src="https://picsum.photos/seed/t2/800/800" alt="" loading="lazy">
-                <div class="overlay">大理 · 2023</div>
+                <img src="photos/world-02.jpg" alt="Black Swan Spreading Wings" loading="lazy">
+                <div class="overlay">Black Swan Spreading Wings · Swan Lake</div>
             </div>
+
             <div class="album-photo" onclick="openLightbox(this)">
-                <img src="https://picsum.photos/seed/t3/800/800" alt="" loading="lazy">
-                <div class="overlay">上海 · 2024</div>
+                <img src="photos/world-03.jpg" alt="Victoria Harbour Panorama" loading="lazy">
+                <div class="overlay">Victoria Harbour Panorama · Hong Kong</div>
             </div>
+
             <div class="album-photo" onclick="openLightbox(this)">
-                <img src="https://picsum.photos/seed/t4/800/800" alt="" loading="lazy">
-                <div class="overlay">杭州 · 2023</div>
+                <img src="photos/world-04.jpg" alt="Swan Reflection" loading="lazy">
+                <div class="overlay">Swan Reflection · Reflection</div>
             </div>
+
             <div class="album-photo" onclick="openLightbox(this)">
-                <img src="https://picsum.photos/seed/t5/800/800" alt="" loading="lazy">
-                <div class="overlay">成都 · 2024</div>
+                <img src="photos/world-05.jpg" alt="Dramatic Clouds" loading="lazy">
+                <div class="overlay">Dramatic Clouds · Sky Above</div>
             </div>
-            <div class="album-photo" onclick="openLightbox(this)">
-                <img src="https://picsum.photos/seed/t6/800/800" alt="" loading="lazy">
-                <div class="overlay">厦门 · 2024</div>
+
+        </div>
+    </div>
+
+    <!-- Album: Life (placeholder) -->
+    <div class="album-panel" id="panel-life">
+        <p class="album-desc">Moments that matter</p>
+        <div class="album-grid" id="grid-life">
+            <div class="album-photo" style="aspect-ratio:4/3;background:var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted);">
+                Coming soon
             </div>
         </div>
     </div>
 
-    <!-- Album: 街拍 -->
-    <div class="album-panel" id="panel-street">
-        <p class="album-desc">城市的呼吸，在镜头里慢下来</p>
-        <div class="album-grid" id="grid-street">
-            <div class="album-photo" onclick="openLightbox(this)">
-                <img src="https://picsum.photos/seed/s1/800/800" alt="" loading="lazy">
-                <div class="overlay">路口 · 2024</div>
-            </div>
-            <div class="album-photo" onclick="openLightbox(this)">
-                <img src="https://picsum.photos/seed/s2/800/800" alt="" loading="lazy">
-                <div class="overlay">书店 · 2023</div>
-            </div>
-            <div class="album-photo" onclick="openLightbox(this)">
-                <img src="https://picsum.photos/seed/s3/800/800" alt="" loading="lazy">
-                <div class="overlay">雨天 · 2024</div>
-            </div>
-            <div class="album-photo" onclick="openLightbox(this)">
-                <img src="https://picsum.photos/seed/s4/800/800" alt="" loading="lazy">
-                <div class="overlay">夜市 · 2024</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Album: 静物 -->
-    <div class="album-panel" id="panel-still">
-        <p class="album-desc">微距之下，看见日常的纹理</p>
-        <div class="album-grid" id="grid-still">
-            <div class="album-photo" onclick="openLightbox(this)">
-                <img src="https://picsum.photos/seed/n1/800/800" alt="" loading="lazy">
-                <div class="overlay">窗台 · 2024</div>
-            </div>
-            <div class="album-photo" onclick="openLightbox(this)">
-                <img src="https://picsum.photos/seed/n2/800/800" alt="" loading="lazy">
-                <div class="overlay">茶杯 · 2023</div>
-            </div>
-            <div class="album-photo" onclick="openLightbox(this)">
-                <img src="https://picsum.photos/seed/n3/800/800" alt="" loading="lazy">
-                <div class="overlay">书桌 · 2024</div>
+    <!-- Album: B&W (placeholder) -->
+    <div class="album-panel" id="panel-bw">
+        <p class="album-desc">Light and shadow</p>
+        <div class="album-grid" id="grid-bw">
+            <div class="album-photo" style="aspect-ratio:4/3;background:var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted);">
+                Coming soon
             </div>
         </div>
     </div>
@@ -382,16 +360,16 @@
     <div class="footer">
         <a href="index.html" class="back-link">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            返回主页
+            Back to Home
         </a>
     </div>
 
     <script>
         function switchTab(name) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.textContent.includes(name === 'travel' ? '旅行' : name === 'street' ? '街拍' : '静物')));
+            const labels = {'world': 'World', 'life': 'Life', 'bw': 'B&W'};
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.textContent.trim() === labels[name]));
             document.querySelectorAll('.album-panel').forEach(p => p.classList.remove('active'));
             document.getElementById('panel-' + name).classList.add('active');
-            // Re-trigger reveal
             observePanel(name);
         }
 
@@ -413,7 +391,6 @@
             if (e.key === 'Escape') closeLightbox({target: document.getElementById('lightbox')});
         });
 
-        // Reveal on scroll
         function observePanel(panelId) {
             const panel = document.getElementById('panel-' + panelId);
             if (!panel) return;
@@ -429,8 +406,7 @@
             photos.forEach(p => obs.observe(p));
         }
 
-        // Init first panel
-        observePanel('travel');
+        observePanel('world');
     </script>
 </body>
 </html>
