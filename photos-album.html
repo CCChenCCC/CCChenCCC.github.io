@@ -27,6 +27,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
+        /* Navigation */
         .nav {
             position: fixed;
             top: 0; left: 0; right: 0;
@@ -74,6 +75,7 @@
         .nav-links a.active { color: var(--accent); }
         .nav-links a.active::after { width: 100%; }
 
+        /* Page Header */
         .page-header {
             padding: 10rem 2rem 3rem;
             text-align: center;
@@ -95,6 +97,7 @@
             margin: 1.5rem auto 0;
         }
 
+        /* Tabs */
         .tabs {
             display: flex;
             justify-content: center;
@@ -131,64 +134,64 @@
         .tab-btn.active { color: var(--ink); font-weight: 500; }
         .tab-btn.active::after { transform: scaleX(1); }
 
-        .album-panel {
-            display: none;
-            max-width: 1100px;
+        /* Gallery panels */
+        .album-panel { display: none; }
+
+        .album-panel.active {
+            display: block;
+        }
+
+        /* === 瀑布流布局（保留原始比例）=== */
+        .gallery {
+            max-width: 1200px;
             margin: 0 auto;
             padding: 3rem 2rem;
+            columns: 3;
+            column-gap: 1.5rem;
         }
 
-        .album-panel.active { display: block; }
-
-        .album-desc {
-            text-align: center;
-            font-size: 0.9rem;
-            color: var(--muted);
-            margin-bottom: 2.5rem;
-            letter-spacing: 0.05em;
-        }
-
-        .album-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.2rem;
-        }
-
-        .album-photo {
-            overflow: hidden;
+        .photo-item {
+            break-inside: avoid;
+            margin-bottom: 1.5rem;
             border-radius: 2px;
+            overflow: hidden;
             cursor: pointer;
             position: relative;
             background: var(--border);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
         }
 
-        .album-photo img {
+        .photo-item:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+        }
+
+        .photo-item img {
             width: 100%;
-            height: auto;
             display: block;
             transition: transform 0.6s ease;
         }
 
-        .album-photo:hover img {
-            transform: scale(1.03);
-        }
+        .photo-item:hover img { transform: scale(1.03); }
 
-        .album-photo .overlay {
+        .photo-caption {
             position: absolute;
-            inset: 0;
-            background: linear-gradient(transparent 60%, rgba(0,0,0,0.4));
+            bottom: 0; left: 0; right: 0;
+            padding: 2rem 1.2rem 1.2rem;
+            background: linear-gradient(transparent, rgba(0,0,0,0.6));
+            color: white;
+            font-size: 0.85rem;
             opacity: 0;
-            transition: opacity 0.4s;
-            display: flex;
-            align-items: flex-end;
-            padding: 1rem;
-            color: #fff;
-            font-size: 0.8rem;
-            letter-spacing: 0.05em;
+            transform: translateY(10px);
+            transition: all 0.4s ease;
         }
 
-        .album-photo:hover .overlay { opacity: 1; }
+        .photo-item:hover .photo-caption {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
+        /* Lightbox */
         .lightbox {
             position: fixed;
             inset: 0;
@@ -225,6 +228,7 @@
 
         .lightbox-close:hover { transform: rotate(90deg); }
 
+        /* Footer */
         .footer {
             padding: 4rem 2rem;
             text-align: center;
@@ -244,24 +248,26 @@
 
         .back-link:hover { color: var(--ink); }
 
-        @media (max-width: 900px) {
-            .album-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-
-        @media (max-width: 600px) {
-            .album-grid { grid-template-columns: 1fr; gap: 1rem; }
-            .nav { padding: 1rem 1.5rem; }
-            .tabs { overflow-x: auto; }
-            .tab-btn { padding: 0.8rem 1.5rem; font-size: 0.8rem; }
-        }
-
-        .album-photo {
+        /* Scroll reveal */
+        .photo-item {
             opacity: 0;
             transform: translateY(20px);
             transition: opacity 0.6s ease, transform 0.6s ease;
         }
 
-        .album-photo.visible { opacity: 1; transform: translateY(0); }
+        .photo-item.visible { opacity: 1; transform: translateY(0); }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .gallery { columns: 2; }
+        }
+
+        @media (max-width: 600px) {
+            .gallery { columns: 1; }
+            .nav { padding: 1rem 1.5rem; }
+            .tabs { overflow-x: auto; }
+            .tab-btn { padding: 0.8rem 1.5rem; font-size: 0.8rem; }
+        }
     </style>
 </head>
 <body>
@@ -286,92 +292,92 @@
         <button class="tab-btn" data-tab="bw">B&W</button>
     </div>
 
+    <!-- 世界 -->
     <div class="album-panel active" id="panel-world">
-        <p class="album-desc">镜头里的世界一角</p>
-        <div class="album-grid" id="grid-world">
-            <div class="album-photo" onclick="openLightbox(this)">
+        <div class="gallery" id="gallery-world">
+            <div class="photo-item" onclick="openLightbox(this)">
                 <img src="photos/world-01.jpg" alt="夕阳鸟影" loading="lazy">
-                <div class="overlay">夕阳 · 水面剪影</div>
+                <div class="photo-caption">夕阳 · 水面剪影</div>
             </div>
-            <div class="album-photo" onclick="openLightbox(this)">
+            <div class="photo-item" onclick="openLightbox(this)">
                 <img src="photos/world-02.jpg" alt="黑天鹅" loading="lazy">
-                <div class="overlay">天鹅湖 · 展翅</div>
+                <div class="photo-caption">天鹅湖 · 展翅</div>
             </div>
-            <div class="album-photo" onclick="openLightbox(this)">
+            <div class="photo-item" onclick="openLightbox(this)">
                 <img src="photos/world-03.jpg" alt="维港全景" loading="lazy">
-                <div class="overlay">香港 · 维多利亚港</div>
+                <div class="photo-caption">香港 · 维多利亚港</div>
             </div>
-            <div class="album-photo" onclick="openLightbox(this)">
+            <div class="photo-item" onclick="openLightbox(this)">
                 <img src="photos/world-04.jpg" alt="天鹅倒影" loading="lazy">
-                <div class="overlay">天鹅湖 · 倒影</div>
+                <div class="photo-caption">天鹅湖 · 倒影</div>
             </div>
-            <div class="album-photo" onclick="openLightbox(this)">
+            <div class="photo-item" onclick="openLightbox(this)">
                 <img src="photos/world-05.jpg" alt="云层" loading="lazy">
-                <div class="overlay">天空 · 云层</div>
+                <div class="photo-caption">天空 · 云层</div>
             </div>
         </div>
     </div>
 
+    <!-- 人生 -->
     <div class="album-panel" id="panel-life">
-        <p class="album-desc">值得定格的瞬间</p>
-        <div class="album-grid" id="grid-life">
-            <div class="album-photo" onclick="openLightbox(this)">
+        <div class="gallery" id="gallery-life">
+            <div class="photo-item" onclick="openLightbox(this)">
                 <img src="photos/life-01.jpg" alt="剪影" loading="lazy">
-                <div class="overlay">剪影 · 逆光</div>
+                <div class="photo-caption">剪影 · 逆光</div>
             </div>
-            <div class="album-photo" onclick="openLightbox(this)">
+            <div class="photo-item" onclick="openLightbox(this)">
                 <img src="photos/life-02.jpg" alt="童趣" loading="lazy">
-                <div class="overlay">童趣 · 小手</div>
+                <div class="photo-caption">童趣 · 小手</div>
             </div>
-            <div class="album-photo" onclick="openLightbox(this)">
+            <div class="photo-item" onclick="openLightbox(this)">
                 <img src="photos/life-03.jpg" alt="陪伴" loading="lazy">
-                <div class="overlay">陪伴 · 时光</div>
+                <div class="photo-caption">陪伴 · 时光</div>
             </div>
-            <div class="album-photo" onclick="openLightbox(this)">
+            <div class="photo-item" onclick="openLightbox(this)">
                 <img src="photos/life-04.jpg" alt="岁月" loading="lazy">
-                <div class="overlay">岁月 · 静好</div>
+                <div class="photo-caption">岁月 · 静好</div>
             </div>
-            <div class="album-photo" onclick="openLightbox(this)">
+            <div class="photo-item" onclick="openLightbox(this)">
                 <img src="photos/life-05.jpg" alt="日常" loading="lazy">
-                <div class="overlay">日常 · 片段</div>
+                <div class="photo-caption">日常 · 片段</div>
             </div>
         </div>
     </div>
 
+    <!-- B&W -->
     <div class="album-panel" id="panel-bw">
-        <p class="album-desc">光影之间</p>
-        <div class="album-grid" id="grid-bw">
-            <div class="album-photo" onclick="openLightbox(this)">
+        <div class="gallery" id="gallery-bw">
+            <div class="photo-item" onclick="openLightbox(this)">
                 <img src="photos/bw-01.jpg" alt="积云" loading="lazy">
-                <div class="overlay">积云 · 质感</div>
+                <div class="photo-caption">积云 · 质感</div>
             </div>
-            <div class="album-photo" onclick="openLightbox(this)">
+            <div class="photo-item" onclick="openLightbox(this)">
                 <img src="photos/bw-02.jpg" alt="城市夜景" loading="lazy">
-                <div class="overlay">城市 · 十字</div>
+                <div class="photo-caption">城市 · 十字</div>
             </div>
-            <div class="album-photo" onclick="openLightbox(this)">
+            <div class="photo-item" onclick="openLightbox(this)">
                 <img src="photos/bw-03.jpg" alt="建筑剪影" loading="lazy">
-                <div class="overlay">光影 · 剪影</div>
+                <div class="photo-caption">光影 · 剪影</div>
             </div>
-            <div class="album-photo" onclick="openLightbox(this)">
+            <div class="photo-item" onclick="openLightbox(this)">
                 <img src="photos/bw-04.jpg" alt="混凝土" loading="lazy">
-                <div class="overlay">空间 · 俯瞰</div>
+                <div class="photo-caption">空间 · 俯瞰</div>
             </div>
-            <div class="album-photo" onclick="openLightbox(this)">
+            <div class="photo-item" onclick="openLightbox(this)">
                 <img src="photos/bw-05.jpg" alt="自行车" loading="lazy">
-                <div class="overlay">静物 · 停放</div>
+                <div class="photo-caption">静物 · 停放</div>
             </div>
-            <div class="album-photo" onclick="openLightbox(this)">
+            <div class="photo-item" onclick="openLightbox(this)">
                 <img src="photos/bw-06.jpg" alt="夜景" loading="lazy">
-                <div class="overlay">夜色 · 徘徊</div>
+                <div class="photo-caption">夜色 · 徘徊</div>
             </div>
-            <div class="album-photo" onclick="openLightbox(this)">
+            <div class="photo-item" onclick="openLightbox(this)">
                 <img src="photos/bw-07.jpg" alt="工匠" loading="lazy">
-                <div class="overlay">匠心 · 雕刻</div>
+                <div class="photo-caption">匠心 · 雕刻</div>
             </div>
-            <div class="album-photo" onclick="openLightbox(this)">
+            <div class="photo-item" onclick="openLightbox(this)">
                 <img src="photos/bw-08.jpg" alt="街景" loading="lazy">
-                <div class="overlay">街头 · 瞬间</div>
+                <div class="photo-caption">街头 · 瞬间</div>
             </div>
         </div>
     </div>
@@ -389,20 +395,8 @@
     </div>
 
     <script>
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const tab = this.dataset.tab;
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                document.querySelectorAll('.album-panel').forEach(p => p.classList.remove('active'));
-                document.getElementById('panel-' + tab).classList.add('active');
-                observePanel(tab);
-            });
-        });
-
         function openLightbox(el) {
-            const img = el.querySelector('img');
-            document.getElementById('lightbox-img').src = img.src;
+            document.getElementById('lightbox-img').src = el.querySelector('img').src;
             document.getElementById('lightbox').classList.add('active');
             document.body.style.overflow = 'hidden';
         }
@@ -414,26 +408,34 @@
             }
         }
 
-        document.addEventListener('keydown', (e) => {
+        document.addEventListener('keydown', e => {
             if (e.key === 'Escape') closeLightbox({target: document.getElementById('lightbox')});
         });
 
-        function observePanel(panelId) {
-            const panel = document.getElementById('panel-' + panelId);
-            if (!panel) return;
-            const photos = panel.querySelectorAll('.album-photo');
-            const obs = new IntersectionObserver((entries) => {
-                entries.forEach((entry, i) => {
-                    if (entry.isIntersecting) {
-                        setTimeout(() => entry.target.classList.add('visible'), i * 80);
-                        obs.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.1 });
-            photos.forEach(p => obs.observe(p));
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tab = this.dataset.tab;
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                document.querySelectorAll('.album-panel').forEach(p => p.classList.remove('active'));
+                document.getElementById('panel-' + tab).classList.add('active');
+                observeGallery(tab);
+            });
+        });
+
+        // Scroll reveal
+        function observeGallery(tab) {
+            const items = document.querySelectorAll('#gallery-' + tab + ' .photo-item');
+            items.forEach((item, i) => {
+                item.classList.remove('visible');
+                setTimeout(() => {
+                    item.classList.add('visible');
+                }, i * 60);
+            });
         }
 
-        observePanel('world');
+        observeGallery('world');
     </script>
 </body>
 </html>
